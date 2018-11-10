@@ -1,0 +1,700 @@
+#!/bin/sh
+#
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+#                      _     _
+#              _ __ __| |___| |__
+#             | '__/ _` / __| '_ \
+#             | | | (_| \__ \ | | |
+#             |_|  \__,_|___/_| |_|
+#
+#             rdsh, the Redis shell
+#
+# R. Carbone (rocco@tecsiel.it)
+#   4Q 2018
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+#
+
+#
+# This script attempts to configure and compile
+# [rdsh] on your system.
+#
+# Based on:
+#  rlibc   - Rocco's C library of useful functions
+#  hiredis - Hiredis is a minimalistic C client library for Redis
+#  tcsh    - C shell with file name completion and command line editing
+#
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+#
+
+#
+# TODO: git submodule update --init
+#
+
+# The name of the game
+PACKAGE=rdsh
+
+# Project directories
+ROOTDIR=`pwd`
+PUBDIR=$ROOTDIR/3rdparty
+SRCDIR=$ROOTDIR/src
+RDSHDIR=$ROOTDIR/src/$PACKAGE
+
+# Git urls
+HIREDISGIT=https://github.com/redis/hiredis.git
+TCSHGIT=https://github.com/tcsh-org/tcsh
+
+# Directories
+RLIBCDIR=${SRCDIR}/rlibc
+HIREDISDIR=${PUBDIR}/hiredis
+TCSHDIR=${PUBDIR}/tcsh
+
+# Libraries
+RLIBC=${RLIBCDIR}/librlibc.a
+HIREDISLIB=${HIREDISDIR}/libhiredis.a
+
+# =-=-=-=-=-=-=-=-
+# All C source files implementing tcsh builtin extensions
+# =-=-=-=-=-=-=-=-
+
+HEADER=rdsh.h
+
+FILES=init.c
+FILES="$FILES prompt.c"
+FILES="$FILES hiredis-wrap.c"
+FILES="$FILES help.c"
+FILES="$FILES sessions.c"
+
+FILES="$FILES connect.c"
+FILES="$FILES disconnect.c"
+FILES="$FILES change.c"
+
+FILES="$FILES commands.c"
+FILES="$FILES connections.c"
+FILES="$FILES data-structures.c"
+FILES="$FILES strings.c"
+FILES="$FILES hashes.c"
+FILES="$FILES lists.c"
+FILES="$FILES sets.c"
+FILES="$FILES sorted-sets.c"
+
+EXTRACMDS="append"
+EXTRACMDS="$EXTRACMDS auth"
+EXTRACMDS="$EXTRACMDS bitcount"
+EXTRACMDS="$EXTRACMDS bitfield"
+EXTRACMDS="$EXTRACMDS bitop"
+EXTRACMDS="$EXTRACMDS bitpos"
+EXTRACMDS="$EXTRACMDS blpop"
+EXTRACMDS="$EXTRACMDS brpop"
+EXTRACMDS="$EXTRACMDS brpoplpush"
+EXTRACMDS="$EXTRACMDS bzpopmax"
+EXTRACMDS="$EXTRACMDS bzpopmin"
+EXTRACMDS="$EXTRACMDS change"
+EXTRACMDS="$EXTRACMDS connect"
+EXTRACMDS="$EXTRACMDS decr"
+EXTRACMDS="$EXTRACMDS decrby"
+EXTRACMDS="$EXTRACMDS del"
+EXTRACMDS="$EXTRACMDS disconnect"
+EXTRACMDS="$EXTRACMDS dump"
+EXTRACMDS="$EXTRACMDS echo"
+EXTRACMDS="$EXTRACMDS exists"
+EXTRACMDS="$EXTRACMDS expire"
+EXTRACMDS="$EXTRACMDS expireat"
+EXTRACMDS="$EXTRACMDS get"
+EXTRACMDS="$EXTRACMDS getbit"
+EXTRACMDS="$EXTRACMDS getrange"
+EXTRACMDS="$EXTRACMDS getset"
+EXTRACMDS="$EXTRACMDS hdel"
+EXTRACMDS="$EXTRACMDS help"
+EXTRACMDS="$EXTRACMDS hexists"
+EXTRACMDS="$EXTRACMDS hget"
+EXTRACMDS="$EXTRACMDS hgetall"
+EXTRACMDS="$EXTRACMDS hincrby"
+EXTRACMDS="$EXTRACMDS hincrbyfloat"
+EXTRACMDS="$EXTRACMDS hkeys"
+EXTRACMDS="$EXTRACMDS hlen"
+EXTRACMDS="$EXTRACMDS hmget"
+EXTRACMDS="$EXTRACMDS hmset"
+EXTRACMDS="$EXTRACMDS hscan"
+EXTRACMDS="$EXTRACMDS hset"
+EXTRACMDS="$EXTRACMDS hsetnx"
+EXTRACMDS="$EXTRACMDS hstrlen"
+EXTRACMDS="$EXTRACMDS hvals"
+EXTRACMDS="$EXTRACMDS incr"
+EXTRACMDS="$EXTRACMDS incrby"
+EXTRACMDS="$EXTRACMDS incrbyfloat"
+EXTRACMDS="$EXTRACMDS keys"
+EXTRACMDS="$EXTRACMDS lindex"
+EXTRACMDS="$EXTRACMDS linsert"
+EXTRACMDS="$EXTRACMDS llen"
+EXTRACMDS="$EXTRACMDS lpop"
+EXTRACMDS="$EXTRACMDS lpush"
+EXTRACMDS="$EXTRACMDS lpushx"
+EXTRACMDS="$EXTRACMDS lrange"
+EXTRACMDS="$EXTRACMDS lrem"
+EXTRACMDS="$EXTRACMDS lset"
+EXTRACMDS="$EXTRACMDS ltrim"
+EXTRACMDS="$EXTRACMDS mget"
+EXTRACMDS="$EXTRACMDS migrate"
+EXTRACMDS="$EXTRACMDS move"
+EXTRACMDS="$EXTRACMDS mset"
+EXTRACMDS="$EXTRACMDS msetnx"
+EXTRACMDS="$EXTRACMDS object"
+EXTRACMDS="$EXTRACMDS persist"
+EXTRACMDS="$EXTRACMDS pexpire"
+EXTRACMDS="$EXTRACMDS pexpireat"
+EXTRACMDS="$EXTRACMDS ping"
+EXTRACMDS="$EXTRACMDS psetex"
+EXTRACMDS="$EXTRACMDS pttl"
+EXTRACMDS="$EXTRACMDS quit"
+EXTRACMDS="$EXTRACMDS randomkey"
+EXTRACMDS="$EXTRACMDS rename"
+EXTRACMDS="$EXTRACMDS renamenx"
+EXTRACMDS="$EXTRACMDS restore"
+EXTRACMDS="$EXTRACMDS rpop"
+EXTRACMDS="$EXTRACMDS rpoplpush"
+EXTRACMDS="$EXTRACMDS rpush"
+EXTRACMDS="$EXTRACMDS rpushx"
+EXTRACMDS="$EXTRACMDS sadd"
+EXTRACMDS="$EXTRACMDS scan"
+EXTRACMDS="$EXTRACMDS scard"
+EXTRACMDS="$EXTRACMDS sdiff"
+EXTRACMDS="$EXTRACMDS sdiffstore"
+EXTRACMDS="$EXTRACMDS select"
+EXTRACMDS="$EXTRACMDS sessions"
+EXTRACMDS="$EXTRACMDS set"
+EXTRACMDS="$EXTRACMDS setbit"
+EXTRACMDS="$EXTRACMDS setex"
+EXTRACMDS="$EXTRACMDS setnx"
+EXTRACMDS="$EXTRACMDS setrange"
+EXTRACMDS="$EXTRACMDS sinter"
+EXTRACMDS="$EXTRACMDS sinterstore"
+EXTRACMDS="$EXTRACMDS sismember"
+EXTRACMDS="$EXTRACMDS smembers"
+EXTRACMDS="$EXTRACMDS smove"
+EXTRACMDS="$EXTRACMDS sort"
+EXTRACMDS="$EXTRACMDS spop"
+EXTRACMDS="$EXTRACMDS srandmember"
+EXTRACMDS="$EXTRACMDS srem"
+EXTRACMDS="$EXTRACMDS sscan"
+EXTRACMDS="$EXTRACMDS strlen"
+EXTRACMDS="$EXTRACMDS sunion"
+EXTRACMDS="$EXTRACMDS sunionstore"
+EXTRACMDS="$EXTRACMDS swapdb"
+EXTRACMDS="$EXTRACMDS touch"
+EXTRACMDS="$EXTRACMDS ttl"
+EXTRACMDS="$EXTRACMDS type"
+EXTRACMDS="$EXTRACMDS unlink"
+EXTRACMDS="$EXTRACMDS wait"
+EXTRACMDS="$EXTRACMDS zadd"
+EXTRACMDS="$EXTRACMDS zcard"
+EXTRACMDS="$EXTRACMDS zcount"
+EXTRACMDS="$EXTRACMDS zincrby"
+EXTRACMDS="$EXTRACMDS zinterstore"
+EXTRACMDS="$EXTRACMDS zlexcount"
+EXTRACMDS="$EXTRACMDS zpopmax"
+EXTRACMDS="$EXTRACMDS zpopmin"
+EXTRACMDS="$EXTRACMDS zrange"
+EXTRACMDS="$EXTRACMDS zrangebylex"
+EXTRACMDS="$EXTRACMDS zrangebyscore"
+EXTRACMDS="$EXTRACMDS zrank"
+EXTRACMDS="$EXTRACMDS zrem"
+EXTRACMDS="$EXTRACMDS zremrangebylex"
+EXTRACMDS="$EXTRACMDS zremrangebyrank"
+EXTRACMDS="$EXTRACMDS zremrangebyscore"
+EXTRACMDS="$EXTRACMDS zrevrange"
+EXTRACMDS="$EXTRACMDS zrevrangebylex"
+EXTRACMDS="$EXTRACMDS zrevrangebyscore"
+EXTRACMDS="$EXTRACMDS zrevrank"
+EXTRACMDS="$EXTRACMDS zscan"
+EXTRACMDS="$EXTRACMDS zscore"
+EXTRACMDS="$EXTRACMDS zunionstore"
+
+# =-=-=-=-=-=-=-=-
+
+# Eval max length of commands
+maxn()
+{
+ longest=0
+ for cmd in $EXTRACMDS; do
+   n=${#cmd}
+   if [ $longest -lt $n ]; then
+    longest=$n
+  fi
+ done
+ echo $longest
+}
+
+#
+# Return the line in the tcsh file [sh.init.c] where a specific command
+# *must* be inserted to have the given extension $cmd full funtional.
+#
+# Warning: order in the array bfunc[] of [biltins] in file [sh.init.c]
+#          is relevant in order to have the extensions available.
+#
+linenumber()
+{
+  cmd=`echo $1`
+  file=`echo $2`
+  case $cmd in
+
+# Please keep them sorted
+    append)           after=pushd              ;;    # Strings
+    auth)             after=rdappend           ;;    # Connections
+    bitcount)         after=rdauth             ;;    # Strings
+    bitfield)         after=rdbitcount         ;;    # Strings
+    bitop)            after=rdbitfield         ;;    # Strings
+    bitpos)           after=rdbitop            ;;    # Strings
+    blpop)            after=rdbitpos           ;;    # Lists
+    brpop)            after=rdblpop            ;;    # Lists
+    brpoplpush)       after=rdbrpop            ;;    # Lists
+    bzpopmax)         after=rdbrpoplpush       ;;    # Sorted Sets
+    bzpopmin)         after=rdbzpopmax         ;;    # Sorted Sets
+    change)           before=case              ;;    # Connections
+    connect)          before=continue          ;;    # Admin
+    decr)             after=rdbzpopmin         ;;    # Strings
+    decrby)           after=rddecr             ;;    # Strings
+    del)              after=rddecrby           ;;    # Data Structures
+    disconnect)       before=echo              ;;    # Admin
+    dump)             after=rddel              ;;    # Data Structures
+    echo)             after=rddump             ;;    # Connections
+    exists)           after=rdecho             ;;    # Data Structures
+    expire)           after=rdexists           ;;    # Data Structures
+    expireat)         after=rdexpire           ;;    # Data Structures
+    get)              after=rdexpireat         ;;    # Strings
+    getbit)           after=rdget              ;;    # Strings
+    getrange)         after=rdgetbit           ;;    # Strings
+    getset)           after=rdgetrange         ;;    # Strings
+    hdel)             after=rdgetset           ;;    # Hashes
+    help)             before=history           ;;    # Admin
+    hexists)          after=rdhdel             ;;    # Hashes
+    hget)             after=rdhexists          ;;    # Hashes
+    hgetall)          after=rdhget             ;;    # Hashes
+    hincrby)          after=rdhgetall          ;;    # Hashes
+    hincrbyfloat)     after=rdhincrby          ;;    # Hashes
+    hkeys)            after=rdhincrbyfloat     ;;    # Hashes
+    hlen)             after=rdhkeys            ;;    # Hashes
+    hmget)            after=rdhlen             ;;    # Hashes
+    hmset)            after=rdhmget            ;;    # Hashes
+    hscan)            after=rdhmset            ;;    # Hashes
+    hset)             after=rdhscan            ;;    # Hashes
+    hsetnx)           after=rdhset             ;;    # Hashes
+    hstrlen)          after=rdhsetnx           ;;    # Hashes
+    hvals)            after=rdhstrlen          ;;    # Hashes
+    incr)             after=rdhvals            ;;    # Strings
+    incrby)           after=rdincr             ;;    # Strings
+    incrbyfloat)      after=rdincrby           ;;    # Strings
+    keys)             after=rdincrbyfloat      ;;    # Data Structures
+    lindex)           after=rdkeys             ;;    # Lists
+    linsert)          after=rdlindex           ;;    # Lists
+    llen)             after=rdlinsert          ;;    # Lists
+    lpop)             after=rdllen             ;;    # Lists
+    lpush)            after=rdlpop             ;;    # Lists
+    lpushx)           after=rdlpush            ;;    # Lists
+    lrange)           after=rdlpushx           ;;    # Lists
+    lrem)             after=rdlrange           ;;    # Lists
+    lset)             after=rdlrem             ;;    # Lists
+    ltrim)            after=rdlset             ;;    # Lists
+    mget)             after=rdltrim            ;;    # Strings
+    migrate)          after=rdmget             ;;    # Data Structures
+    move)             after=rdmigrate          ;;    # Data Structures
+    mset)             after=rdmove             ;;    # Strings
+    msetnx)           after=rdmset             ;;    # Strings
+    object)           after=rdmsetnx           ;;    # Data Structures
+    persist)          after=rdobject           ;;    # Data Structures
+    pexpire)          after=rdpersist          ;;    # Data Structures
+    pexpireat)        after=rdpexpire          ;;    # Data Structures
+    ping)             after=rdpexpireat        ;;    # Connections
+    psetex)           after=rdping             ;;    # Strings
+    pttl)             after=rdpsetex           ;;    # Data Structures
+    quit)             after=rdpttl             ;;    # Connections
+    randomkey)        after=rdquit             ;;    # Data Structures
+    rename)           after=rdrandomkey        ;;    # Data Structures
+    renamenx)         after=rdrename           ;;    # Data Structures
+    restore)          after=rdrenamenx         ;;    # Data Structures
+    rpop)             after=rdrestore          ;;    # Lists
+    rpoplpush)        after=rdrpop             ;;    # Lists
+    rpush)            after=rdrpoplpush        ;;    # Lists
+    rpushx)           after=rdrpush            ;;    # Lists
+    sadd)             after=rdrpushx           ;;    # Sets
+    scan)             after=rdsadd             ;;    # Data Structures
+    scard)            after=rdscan             ;;    # Sets
+    sdiff)            after=rdscard            ;;    # Sets
+    sdiffstore)       after=rdsdiff            ;;    # Sets
+    select)           after=rdsdiffstore       ;;    # Admin
+    sessions)         after=sched              ;;    # Admin
+    set)              after=rdselect           ;;    # Strings
+    setbit)           after=rdset              ;;    # Strings
+    setex)            after=rdsetbit           ;;    # Strings
+    setnx)            after=rdsetex            ;;    # Strings
+    setrange)         after=rdsetnx            ;;    # Strings
+    sinter)           after=rdsetrange         ;;    # Sets
+    sinterstore)      after=rdsinter           ;;    # Sets
+    sismember)        after=rdsinterstore      ;;    # Sets
+    smembers)         after=rdsismember        ;;    # Sets
+    smove)            after=rdsmembers         ;;    # Sets
+    sort)             after=rdsmove            ;;    # Data Structures
+    spop)             after=rdsort             ;;    # Sets
+    srandmember)      after=rdspop             ;;    # Sets
+    srem)             after=rdsrandmember      ;;    # Sets
+    sscan)            after=rdsrem             ;;    # Sets
+    strlen)           after=rdsscan            ;;    # Strings
+    sunion)           after=rdstrlen           ;;    # Sets
+    sunionstore)      after=rdsunion           ;;    # Sets
+    swapdb)           after=rdsunionstore      ;;    # Connections
+    touch)            after=rdswapdb           ;;    # Data Structures
+    ttl)              after=rdtouch            ;;    # Data Structures
+    type)             after=rdttl              ;;    # Data Structures
+    unlink)           after=rdtype             ;;    # Data Structures
+    wait)             after=rdunlink           ;;    # Data Structures
+    zadd)             after=rdwait             ;;    # Sorted Sets
+    zcard)            after=rdzadd             ;;    # Sorted Sets
+    zcount)           after=rdzcard            ;;    # Sorted Sets
+    zincrby)          after=rdzcount           ;;    # Sorted Sets
+    zinterstore)      after=rdzincrby          ;;    # Sorted Sets
+    zlexcount)        after=rdzinterstore      ;;    # Sorted Sets
+    zpopmax)          after=rdzlexcount        ;;    # Sorted Sets
+    zpopmin)          after=rdzpopmax          ;;    # Sorted Sets
+    zrange)           after=rdzpopmin          ;;    # Sorted Sets
+    zrangebylex)      after=rdzrange           ;;    # Sorted Sets
+    zrangebyscore)    after=rdzrangebylex      ;;    # Sorted Sets
+    zrank)            after=rdzrangebyscore    ;;    # Sorted Sets
+    zrem)             after=rdzrank            ;;    # Sorted Sets
+    zremrangebylex)   after=rdzrem             ;;    # Sorted Sets
+    zremrangebyrank)  after=rdzremrangebylex   ;;    # Sorted Sets
+    zremrangebyscore) after=rdzremrangebyrank  ;;    # Sorted Sets
+    zrevrange)        after=rdzremrangebyscore ;;    # Sorted Sets
+    zrevrangebylex)   after=rdzrevrange        ;;    # Sorted Sets
+    zrevrangebyscore) after=rdzrevrangebylex   ;;    # Sorted Sets
+    zrevrank)         after=rdzrevrangebyscore ;;    # Sorted Sets
+    zscan)            after=rdzrevrank         ;;    # Sorted Sets
+    zscore)           after=rdzscan            ;;    # Sorted Sets
+    zunionstore)      after=rdzscore           ;;    # Sorted Sets
+
+    *)                before=xxx after=xxx     ;;
+  esac
+
+  row=0
+  if [ "$before" != "" -a "$before" != "xxx" ]; then
+    row=`grep -n \"$before\" $file | head -1 | cut -d":" -f 1`
+  elif [ "$after" != "" -a "$after" != "xxx" ]; then
+    row=`grep -n \"$after\" $file | head -1 | cut -d":" -f 1`
+    row=`expr $row + 1`
+  fi
+  echo $row
+}
+
+#
+# Main processing
+#
+
+# Development tree
+echo "$PACKAGE development tree"
+echo "  ."
+echo "  |-- `basename $PUBDIR`"
+echo "  |   \`-- `basename $HIREDISDIR`    - (github clone)"
+echo "  |   \`-- $TCSHDIR       - (github clone)"
+echo "  \`-- `basename $SRCDIR`"
+echo "      |-- extensions - Implementation of addiotional builtins for Redis"
+echo "      |-- $PACKAGE       - Hack of the tcsh for Redis"
+echo "      \`-- rlibc      - C library of useful functions"
+echo
+
+# Compile rlibc if not already here
+cd $ROOTDIR
+echo "Rocco's C library"
+if [ ! -f ${RLIBC} ]; then
+  echo -n "  Compiling rlibc library ... "
+  make -C src/rlibc -s 1> /dev/null 2>&1
+  echo "done!"
+else
+  echo "  Found [rlibc] in $RLIBC"
+fi
+
+# Move to the root download directory
+if [ ! -d $PUBDIR ]; then
+  mkdir $PUBDIR
+fi
+cd $PUBDIR
+
+#
+# hiredis
+#
+echo "Hiredis is a minimalistic C client library for Redis"
+if [ ! -d $HIREDISDIR ]; then
+  echo
+  git clone $HIREDISGIT
+fi
+
+if [ ! -f $HIREDISLIB ]; then
+  cd $HIREDISDIR
+  echo -n "  Compiling hiredis library ... "
+  make 1> /dev/null 2>&1
+  echo "done!"
+else
+  echo "  Found [hiredis] in $HIREDISLIB"
+fi
+
+#
+# tcsh
+#
+cd $PUBDIR
+echo "tcsh  - C shell with file name completion and command line editing"
+if [ ! -d $TCSHDIR ]; then
+  echo
+  git clone $TCSHGIT
+  echo
+fi
+
+# -=-=-=-=-=-=-=-=-=-=
+# Start patching tcsh
+# -=-=-=-=-=-=-=-=-=-=
+
+# evaluate EXTRA items to be included in Makefile.in
+USRLIBS="${RLIBC} ${HIREDISLIB}"
+EXTRAFLAGS="-I${RLIBCDIR} -I../extensions -I${HIREDISDIR}"
+EXTRALIBS="${USRLIBS} -lcrypt -lcurses"
+
+# extra source files
+EXTRASRCS="$HEADER $PACKAGE-tcsh-wrap.c"
+for file in $FILES; do
+  replace=`echo $file | sed -e "s|\(.*\).c|$PACKAGE-\1.c|"`
+  EXTRASRCS="$EXTRASRCS $replace"
+done
+
+# extra object files
+EXTRAOBJS="$PACKAGE-tcsh-wrap.o"
+for file in $FILES; do
+  replace=`echo $file | sed -e "s|\(.*\).c|$PACKAGE-\1.o|"`
+  EXTRAOBJS="$EXTRAOBJS $replace"
+done
+
+# -=-=-=-=-=-=-=-=-=-=-=-=-=
+
+# Move to the source directory
+echo
+cd $SRCDIR
+
+# Create and populate the main directory
+if [ ! -d $PACKAGE ]; then
+  echo "Populating main src directory $PACKAGE ..."
+  cp -r $TCSHDIR $PACKAGE
+  rm -rf $PACKAGE/.git $PACKAGE/.gitignore
+fi
+
+echo "Patching now tcsh sources ............"
+
+#
+# Patch src file $HEADER
+#
+echo -n "  patching source file $HEADER ........ "
+cp $SRCDIR/extensions/$HEADER $SRCDIR/$PACKAGE/$HEADER
+for cmd in `echo $EXTRACMDS | sort`; do
+  cat $SRCDIR/$PACKAGE/$HEADER | echo "int $PACKAGE"_$cmd "(int argc, char * argv []);" >> $SRCDIR/$PACKAGE/$HEADER
+done
+echo "done!"
+
+#
+# Patch src file tcsh-wrapr.c
+#
+echo -n "  patching source file tcsh-wrap.c ..... "
+cp $SRCDIR/extensions/tcsh-wrap.c $SRCDIR/$PACKAGE/$PACKAGE-tcsh-wrap.c
+echo >> $SRCDIR/$PACKAGE/$PACKAGE-tcsh-wrap.c
+
+for cmd in `echo $EXTRACMDS`; do
+  echo "void tcsh_$cmd (Char ** v, struct command * c) { USE(c); tcsh_xxx (v, rdsh_$cmd); }" >> $SRCDIR/$PACKAGE/$PACKAGE-tcsh-wrap.c
+done
+echo "done!"
+
+# Move to the build directory
+cd $SRCDIR/$PACKAGE
+
+# Add links to project sources tree
+for f in $FILES; do
+  if [ ! -h $PACKAGE-$f ]; then
+    if [ -f ../extensions/$f ]; then
+      ln -sf ../extensions/$f $PACKAGE-$f
+    else
+      echo "  Error: source file `basename $SRCDIR`/extensions/$f does not exist!"
+      exit 0
+    fi
+  fi
+done
+
+#
+# Patch config/linux for tool chain changes
+#
+echo -n "  patching config/linux .............. "
+if [ ! -f config/linux.ORG ]; then
+  cp config/linux config/linux.ORG
+fi
+
+cp config/linux.ORG config/linux.tmp
+cat config/linux.tmp | sed -e 's|SVID_SOURCE|DEFAULT_SOURCE|g' -e 's|BSD_SOURCE|DEFAULT_SOURCE|g' > config/linux
+rm -f config/linux.tmp
+echo "done!"
+
+#
+# Patch Makefile.in
+#
+#   o change the name to the executable
+#   o change the name to the installed binary
+#   o add search path for project header file to EXTRAFLAGS
+#   o add more to EXTRALIBS
+#   o add ${EXTRASRCS} to the macro SHSRCS
+#   o add ${EXTRAOBJS} to the macro SHOBJS
+#   o add macro EXTRASRCS= with project source files
+#   o add macro EXTRAOBJS= with project object files
+#   o change the main target to use name $PACKAGE
+#
+
+echo -n "  patching Makefile.in ............... "
+if [ ! -f Makefile.in.ORG ]; then
+  cp Makefile.in Makefile.in.ORG
+fi
+
+cp Makefile.in.ORG Makefile.in.tmp
+cat Makefile.in.tmp | sed -e 's|RDSH=tcsh|RDSH=rdsh|' > Makefile.in
+
+cp Makefile.in Makefile.in.tmp
+cat Makefile.in.tmp | sed -e 's|/tcsh|/rdsh|' > Makefile.in
+
+cp Makefile.in Makefile.in.tmp
+cat Makefile.in.tmp | sed -e "s|EXTRAFLAGS =\(.*\)|EXTRAFLAGS = \1 $EXTRAFLAGS|" > Makefile.in
+
+cp Makefile.in Makefile.in.tmp
+cat Makefile.in.tmp | sed -e "s|EXTRALIBS =\(.*\)|EXTRALIBS = \1 $EXTRALIBS|" > Makefile.in
+
+cp Makefile.in Makefile.in.tmp
+cat Makefile.in.tmp | sed -e 's|SHSRCS=\(.*\)|SHSRCS=\1 ${EXTRASRCS}|' > Makefile.in
+
+cp Makefile.in Makefile.in.tmp
+cat Makefile.in.tmp | sed -e 's|OBJS= ${SHOBJS}\(.*\)|OBJS= ${SHOBJS}\1 ${EXTRAOBJS}|' > Makefile.in
+
+line=`grep -n "SHSRCS=" Makefile.in | cut -d":" -f 1`
+cp Makefile.in Makefile.in.tmp
+cat Makefile.in.tmp | sed "$line i EXTRASRCS= $EXTRASRCS" > Makefile.in
+
+line=`grep -n "OBJS=" Makefile.in | tail -1 | cut -d":" -f 1`
+cp Makefile.in Makefile.in.tmp
+cat Makefile.in.tmp | sed "$line i EXTRAOBJS= $EXTRAOBJS" > Makefile.in
+
+cp Makefile.in Makefile.in.tmp
+cat Makefile.in.tmp | sed -e 's|tcsh$(EXEEXT)|rdsh|' > Makefile.in
+
+cp Makefile.in Makefile.in.tmp
+cat Makefile.in.tmp | sed -e "s|rdsh:.*|rdsh: \${OBJS} \${LIBES} |" > Makefile.in
+
+rm -f Makefile.in.tmp
+rm -f Makefile
+echo "done!"
+
+#
+# Patch sh.c
+#
+#   o add [rdsh] initialization function
+#
+echo -n "  patching sh.c ...................... "
+if [ ! -f sh.c.ORG ]; then
+  cp sh.c sh.c.ORG
+fi
+
+# Add [rdsh] call to the inizialization function
+cp sh.c.ORG sh.c.tmp
+line=`grep -n 'process(setintr)' sh.c.tmp | cut -d":" -f 1`
+cat sh.c.tmp | sed "$line i {extern void rdsh_init (char * progname); rdsh_init (progname); }" > sh.c
+rm -f sh.c.tmp
+echo "done!"
+
+#
+# Patch sh.decls.h
+#
+#   o add function declarations
+#
+echo -n "  patching sh.decls.h ................ "
+if [ ! -f sh.decls.h.ORG ]; then
+  cp sh.decls.h sh.decls.h.ORG
+fi
+
+cp sh.decls.h.ORG sh.decls.h
+for cmd in $EXTRACMDS; do
+  cp sh.decls.h sh.decls.h.tmp
+  line=`grep -n '#define' sh.decls.h.tmp | head -1 | cut -d":" -f 1`
+  line=`expr $line + 2`
+  cat sh.decls.h.tmp | sed "$line i extern void tcsh_$cmd (Char **, struct command *);" > sh.decls.h
+done
+
+cp sh.decls.h sh.decls.h.tmp
+line=`grep -n '#define' sh.decls.h.tmp | head -1 | cut -d":" -f 1`
+line=`expr $line + 2`
+cat sh.decls.h.tmp | sed "$line i /* builtin extensions for rdsh */" > sh.decls.h
+rm -f sh.decls.h.tmp
+echo "done!"
+
+#
+# Patch sh.init.c
+#
+#   o add entries to the table of builtins => const struct biltins bfunc[]
+#
+echo "  patching sh.init.c ................. "
+if [ ! -f sh.init.c.ORG ]; then
+  cp sh.init.c sh.init.c.ORG
+fi
+
+# Add commands to the table of builtins
+maxname=`maxn`
+cp sh.init.c.ORG sh.init.c
+
+# Patch [while] command to add a trailing comma in the event it serves to add commands as last
+cp sh.init.c sh.init.c.tmp
+cat sh.init.c.tmp | sed -e 's|{ "while",		dowhile,	1,	INF	}|{ "while",		dowhile,	1,	INF	},|' > sh.init.c
+
+for cmd in $EXTRACMDS; do
+  cp sh.init.c sh.init.c.tmp
+  line=`linenumber $cmd sh.init.c.tmp`
+  if [ "$line" != "" -a "$line" != "0" ]; then
+  case $cmd in
+    help | sessions | connect | disconnect | change)
+      cat sh.init.c.tmp | sed "$line i     { \"$cmd\", tcsh_$cmd, 0, INF },		/* extension for rdsh */" > sh.init.c
+    ;;
+
+    *)
+      cat sh.init.c.tmp | sed "$line i     { \"rd$cmd\", tcsh_$cmd, 0, INF },		/* extension for rdsh */" > sh.init.c
+    ;;
+  esac
+
+    echo $maxname $cmd $line | awk '{ printf ("       %-*.*s ................... ok! line [%s]\n", $1, $1, $2, $3) }'
+  else
+    echo $maxname $cmd | awk '{ printf ("       %-*.*s ................... failed! - Please add to switch in linenumber()\n", $1, $1, $2) }'
+  fi
+done
+
+rm -f sh.init.c.tmp
+echo
+
+# Attempt to configure and compile the shell
+cd $RDSHDIR
+if [ ! -f config.log ]; then
+  echo -n "  Configuring $PACKAGE ... "
+ ./configure CFLAGS='-g -O2 -D_DEFAULT_SOURCE -Wno-pointer-compare' > /dev/null
+ echo "done!"
+fi
+
+echo -n "  Compiling $PACKAGE ..... "
+# force recompile and link
+rm -f sh.init.o
+make 1> MAKEOUT 2>&1
+if [ -x rdsh ]; then
+  echo "done!"
+  rm -f MAKEOUT
+  echo
+  echo "rdsh, the Redis shell, is available in src/rdsh/rdsh"
+  echo "It's a good idea to run it now ;)"
+else
+  echo "failed! Please check for errors in src/rdsh/MAKEOUT"
+fi
+
+echo
+echo "That's all folks!"

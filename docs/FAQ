@@ -1,0 +1,71 @@
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                      _     _
+              _ __ __| |___| |__
+             | '__/ _` / __| '_ \
+             | | | (_| \__ \ | | |
+             |_|  \__,_|___/_| |_|
+
+             rdsh, the Redis shell
+
+Rocco Carbone (rocco@tecsiel.it)
+  4Q 2018
+
+SPDX-License-Identifier: BSD-3-Clause
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+F A Q:
+======
+
+Q. Why did you implemented rdsh?
+A. Because of my own personal needs!
+
+
+Q. What can rdsh do for me?
+A. rdsh is a both a shell and a Redis client.
+
+
+Q. Why I should use this software?
+A. So, if you are interestered in Redis data structures,
+   please give rdsh a chance to run on your host.
+   It aims to be in a near future a modern solution as
+   Redis client for character-based terminals.
+
+
+Q. Why does rdsh use the hiredis library included in Redis?
+A. It was the choice by default because hiredis it widely
+   used in different contexts by several people and
+   organizations and maintained by the same author of Redis.
+
+
+Q. Had rdsh been ported over other shells?
+A. No.
+   But I planned to have rdsh as an extension of the GNU bash
+
+
+Q. Can I know the list of OSs and supported platforms rdsh run on?
+A. I wrote and tested the shell on my Intel x86_64 box running
+    Debian/Linux (the glorious Intel NUC) with the GNU C compiler.
+   I think it should be ported with minimal effort on any Posix
+   compliant System.
+
+   Microsoft Windows? oh no, again! please don't ask.
+
+
+Q. Where can I get the latest version of rdsh?
+A. You can download it from github at:
+     https://github.com/rcarbone/rdsh
+
+
+Q. Where can I get more information on rdsh?
+A. There is not an official home page for rdsh (yet).
+
+
+Q. Are there any mailing list dedicated to rdsh?
+A. No! for the time being.
+
+
+Q. If I need support can I contact you?
+A. Yes, but I am so busy. So send me a mail and please be patient!

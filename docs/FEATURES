@@ -1,0 +1,8 @@
+A simple command line based Redis client.
+
+It has a multi-session design allowing you to issue and execute multiple commands simultaneosly
+or in the background.
+
+It implements command name completion, Redis servers list caching,
+command aliases, and a lot of other features not commonly found in
+other Redis clients.

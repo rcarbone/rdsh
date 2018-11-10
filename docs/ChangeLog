@@ -1,0 +1,21 @@
+Oct 25 2018  R. Carbone (rocco@tecsiel.it)
+   I downloaded Redis and started rdsh development using sources from
+   my unfinished and very unstable project osh, an Oracle shell.
+
+Nov 10 2018  R. Carbone (rocco@tecsiel.it)
+   * version 0.1.0
+
+     Initial version
+     Features:
+       - use latest tcsh github clone
+       - use latest hiredis github clone
+       - support for all Redis commands:
+         * sessions (#4)
+         * connections (#6)
+         * data structures (#24)
+         * strings (#24)
+         * hashes (#15)
+	 * lists (#17)
+         * sets (#15)
+         * sorted sets (#25)
+       - Runs under Debian GNU/Linux buster/sid and CentOS Linux Release 7.5

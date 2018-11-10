@@ -1,0 +1,14 @@
+AUTHORS       - the list of authors
+LICENSE       - BSD 3-Clause License
+ChangeLog     - description of differences between releases
+FAQ           - a short collection of questions, with answers
+FILES         - list of files distributed as a part of the software
+HACKING       - istructions to hack the shell
+NEWS          - what happended from the latest release
+README        - the most important file in the package :-)
+TODO          - what I planned for the next week-end
+VERSION       - version of this release
+
+rlibc/        - C collection of useful functions
+extensions/   - C source files implementing tcsh builtin extension for Redis
+rdsh/         - a patched version of latest github tcsh with builtin extension for Redis

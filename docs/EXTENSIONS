@@ -1,0 +1,58 @@
+Writing Extensions
+==================
+
+This section explains how to add a new built-in to the Redis shell.
+
+As I said in the README, the Redis shell is easily extendible.
+At the time of writing, I had already implemented about 132 new builtins.
+
+The simplest possible extension to the Redis shell can be found
+in src/extensions/stupid.c in the source distribution, which can be used
+both as template and also as an valuable tutorial for the beginners.
+
+Suppose now you want to add a new function to the already available
+extensions of the Redis shell.  Here are the istructions to proceed.
+
+1. cp the source file src/extensions/stupid.c in src/extensions/foo.c
+   and edit the copy to meet your requirements.
+
+   Choose the name you want to assign to the new builtin extension
+   and assign the name to the function
+   e.g.
+     int rdsh_foo (int argc, char * argv []) { ... }
+
+2. edit the src/extensions/Makefile to add foo.c to the list of known
+   sources to be compiled.
+
+   In fact this Makefile can be used only with development goals
+   in mind, just to allow on-place compilation and before
+   the extension has to be definitely inserted into the rdsh.
+
+4. Add a numeric id CMD_FOO in rdsh.h (section: GNU short options)
+
+5. Add command CMD_FOO in help.c (section: static builtin_t commands [])
+
+6. edit 'configure' at the top level
+
+   a. add the source file foo.c to the shell variable $FILES
+
+   b. add a branch [case] needed to patch sh.init.c in subroutine
+      linenumber() near the begin of the configure file.
+
+      Example: if the name you have assigned to the new extension
+                is "foo" then it _must_ be placed before the already
+                exiting command "foreach", and therefore you have to
+                add a line in the switch section of the linenumeber()
+                subroutine of configure which looks like this:
+
+                foo)     before=foreach     ;;
+
+      Warning: Please note that alphabetic order in this table is vital.
+               You will miss the extension if you insert the entry in a
+               wrong place!  This is currently tcsh limitation for unknown reasons.
+
+      You have be warned!!!
+
+That's all folks!
+
+/rocco

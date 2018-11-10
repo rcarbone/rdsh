@@ -1,0 +1,36 @@
+                                                                   -*-text-*-
+
+How to add an new builtin for rdsh.
+===================================
+
+Suppose you want to add a new function to the already avaialable extensions for rdsh.
+Here are the istructions to proceed.
+
+1. Edit the extensions/help.c in order to add an item to the table
+   of builtins known by the shell
+
+2. Add the extension with its own unique [name] in a file
+   under the extensions/ directory
+
+   /* tcsh builtin extension [name] */
+   int rdsh_name (int argc, char * argv [])
+   {
+     return rdsh_command (argc, argv);
+   }
+
+3. Edit the configure shell script and add there a new line
+   to the list of EXTRACMDS containing the [name] for the builtin
+
+4. Edit the configure shell script and add there a new line
+   to the switch in function linenumber()
+
+   Please follow the rules already implemented because
+   the alphabetic order is vital.
+
+   You will miss the extension if you insert an entry in a wrong place!
+   You have be warned.
+
+
+have fun!
+
+/rocco

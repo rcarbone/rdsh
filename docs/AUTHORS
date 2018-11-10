@@ -1,0 +1,59 @@
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                      _     _
+              _ __ __| |___| |__
+             | '__/ _` / __| '_ \
+             | | | (_| \__ \ | | |
+             |_|  \__,_|___/_| |_|
+
+             rdsh, the Redis shell
+
+Rocco Carbone (rocco@tecsiel.it)
+  4Q 2018
+
+SPDX-License-Identifier: BSD-3-Clause
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+This file lists people who have written or made
+significant contribution to rdsh, the Redis shell.
+
+Please take a look at the ChangeLog file for specific
+changes by authors, and look into the THANKS file for
+people who helped in various ways on this software.
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+A U T H O R S:
+==============
+
+* Rocco Carbone (rocco@tecsiel.it)
+  o Idea
+  o Design
+  o Core base implementation
+  o Script to auto configure and apply patches to the tcsh's sources
+  o Testing
+  o Documentation
+  o Maintainer
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+rdsh exists because I am a programmer and I am so lazy to set the PATH
+enviroment variable to search for a suitable Redis client while doing
+my daily job.
+
+I would like to fill/query/display Redis data with only few statements
+and none of the existent clients are programmable enough to match
+my requirements.
+
+Moreover I also am a pipe (|) fanatic, and, in the spirit of Unix,
+I usually want to filter the output and pass it to subprograms.
+
+None of the Redis clients I tried have the pipe (|) command implemented.
+
+So, instead to reinvent the wheel, I just started to think to reuse the pipe
+mechanism that all the Unix shells have already implemented.
+
+So rdsh was born as an extension of the tcsh, which is my daily shell.
+I started hacking the tcsh sources in order to add more builtins as
+extensions for Redis servers.
