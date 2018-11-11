@@ -25,6 +25,7 @@
 #include <stdarg.h>
 #include <time.h>
 #include <sys/time.h>
+#include <signal.h>
 
 /* Project headers */
 #include "rdsh.h"
@@ -41,7 +42,6 @@ static char __version__ []  = RDSH_VERSION;
 static char __authors__ []  = RDSH_AUTHOR;
 static char __released__ [] = RDSH_RELEASED;
 static char __id__ []       = "A hack of the popular 'tcsh' with builtin extensions for Redis.\n";
-static char __what__ []     = "It allows you to interact with Redis servers without leaving your shell!";
 
 
 /* You are welcome! */
@@ -54,8 +54,6 @@ static void helloworld (char * program)
       xprintf ("\n");
       xprintf ("-- %s %s (%s) -- %s\n", program, __version__, __released__, __authors__);
       xprintf ("%s\n", __id__);
-      xprintf ("%s\n", __what__);
-      xprintf ("\n");
 
       once = true;
     }
@@ -65,6 +63,9 @@ static void helloworld (char * program)
 /* Just few initialization steps */
 void rdsh_init (char * progname)
 {
+  /* Ignore writes to connections that have been closed at the other end */
+  signal (SIGPIPE, SIG_IGN);
+
   /* Set time the shell boots */
   gettimeofday (& boottime, NULL);
 

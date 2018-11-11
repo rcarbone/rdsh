@@ -26,19 +26,13 @@
  */
 
 
-/* There are no function declaration for all the extensions */
-#if defined(__GNUC__)
-#pragma GCC diagnostic ignored "-Wimplicit-function-declaration"
-#else
-#pragma clang diagnostic ignored "-Wimplicit-function-declaration"
-#endif
-
 /* System headers */
 #include "stdio.h"
 #include "stdarg.h"
 
 /* Project headers */
 #include "rdsh.h"
+#include "prototypes.h"
 
 
 /* variables/functions required to link */
@@ -48,6 +42,46 @@ char STRprompt [256];
 int xprintf (const char * s, ...)                    { return 0; }
 char * s_strsave (char * s)                          { return s; }
 void setcopy (const char * a, const char * b, int n) { }
+
+
+static void rdsh_server (int argc, char * argv [])
+{
+  rdsh_bgrewriteaof (argc, argv);
+  rdsh_bgsave (argc, argv);
+  rdsh_client_getname (argc, argv);
+  rdsh_client_id (argc, argv);
+  rdsh_client_kill (argc, argv);
+  rdsh_client_list (argc, argv);
+  rdsh_client_pause (argc, argv);
+  rdsh_client_reply (argc, argv);
+  rdsh_client_setname (argc, argv);
+  rdsh_client_unblock (argc, argv);
+  rdsh_cmd (argc, argv);
+  rdsh_command_count (argc, argv);
+  rdsh_command_getkeys (argc, argv);
+  rdsh_command_info (argc, argv);
+  rdsh_config_get (argc, argv);
+  rdsh_config_resetstat (argc, argv);
+  rdsh_config_rewrite (argc, argv);
+  rdsh_config_set (argc, argv);
+  rdsh_dbsize (argc, argv);
+  rdsh_debug_object (argc, argv);
+  rdsh_flushall (argc, argv);
+  rdsh_flushdb (argc, argv);
+  rdsh_info (argc, argv);
+  rdsh_lastsave (argc, argv);
+  rdsh_memory_doctor (argc, argv);
+  rdsh_memory_help (argc, argv);
+  rdsh_memory_malloc_stats (argc, argv);
+  rdsh_memory_purge (argc, argv);
+  rdsh_memory_stats (argc, argv);
+  rdsh_memory_usage (argc, argv);
+  rdsh_monitor (argc, argv);
+  rdsh_role (argc, argv);
+  rdsh_save (argc, argv);
+  rdsh_sync (argc, argv);
+  rdsh_time (argc, argv);
+}
 
 
 static void rdsh_connections (int argc, char * argv [])
@@ -217,9 +251,8 @@ int main (int argc, char * argv [])
 
   if (argc == 0)
     {
-      /*
-       * Never executed, so no check about possible failures.
-       */
+      /* Never executed, so no check is done about possible failures. */
+      rdsh_server (argc, argv);
       rdsh_connections (argc, argv);
       rdsh_data_structures (argc, argv);
       rdsh_strings (argc, argv);

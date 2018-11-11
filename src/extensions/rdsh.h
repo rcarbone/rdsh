@@ -262,7 +262,6 @@ void lesssession (rdsh_t * redis);
 /* Public functions in file commands.c */
 int rdsh_command (int argc, char * argv []);
 
-
 /*
  * -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  * Do not edit anything below, configure creates it.

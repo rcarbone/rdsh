@@ -38,6 +38,9 @@ LIBSRCS  += change.c
 # General
 LIBSRCS  += commands.c
 
+# Server
+LIBSRCS  += server.c
+
 # Connections
 LIBSRCS  += connections.c
 

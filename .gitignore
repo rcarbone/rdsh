@@ -1,0 +1,19 @@
+# all in [pub] and [src/rdsh]
+3rdparty/
+src/extensions/trylink
+src/rdsh
+
+# Static libraries
+*.a
+
+# Shared libraries
+*.so
+
+# Object files
+*.o
+
+# Dependency files
+*.M
+
+# Backup files
+*~
