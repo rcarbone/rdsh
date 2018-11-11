@@ -26,8 +26,8 @@
 
 #define DEFAULT_HOST     "localhost"
 #define DEFAULT_PORT     6379
-#define DEFAULT_AUTH     NULL
 #define DEFAULT_TIMEOUT  1500
+#define DEFAULT_AUTH     NULL
 
 
 /* Redis server descriptor */
@@ -37,7 +37,7 @@ typedef struct
 
   char * host;             /* both hostname or IP address     */
   unsigned port;           /* IPv4 port                       */
-  unsigned timeout;        /* connection/reply timeout        */
+  unsigned timeout;        /* connection/reply timeout msecs  */
 
   char * name;
   char * auth;

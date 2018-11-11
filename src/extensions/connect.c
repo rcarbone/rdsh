@@ -32,7 +32,7 @@ enum
   OPT_VERBOSE = 'v',
 
   /* Server */
-  OPT_HOST    = 'H',    /* IPv4 host     */
+  OPT_HOST    = 'n',    /* IPv4 hostname */
   OPT_PORT    = 'p',    /* Port          */
   OPT_TIMEOUT = 't',    /* Reply timeout */
   OPT_AUTH    = 'a'     /* Auth          */
@@ -45,7 +45,7 @@ static struct option lopts [] =
 {
   /* Miscellanea */
   { "help",    no_argument,       NULL, OPT_HELP    },
-  { "verbose", no_argument, NULL, OPT_VERBOSE       },
+  { "verbose", no_argument,       NULL, OPT_VERBOSE },
 
   /* Server */
   { "host",    required_argument, NULL, OPT_HOST    },
@@ -66,10 +66,10 @@ static void usage (char * name, char * synopsis, char * help, struct option * op
   common_usage (n, name, synopsis, help, options);
 
   printf ("Connection:\n");
-  usage_item (options, n, OPT_HOST,    "host");
-  usage_item (options, n, OPT_PORT,    "port");
-  usage_item (options, n, OPT_TIMEOUT, "timeout");
-  usage_item (options, n, OPT_AUTH,    "auth");
+  usage_item (options, n, OPT_HOST,    "hostname (default: localhost)");
+  usage_item (options, n, OPT_PORT,    "port     (default: 6379)");
+  usage_item (options, n, OPT_TIMEOUT, "timeout  (default: 1500 msecs)");
+  usage_item (options, n, OPT_AUTH,    "auth     (default: none)");
 }
 
 
@@ -117,8 +117,26 @@ int rdsh_connect (int argc, char * argv [])
     }
 
   /* Check for optional arguments */
-  if (argc < optind + b -> args)
-    ;
+  switch (argc - optind)
+    {
+    case 0:   /* no optional arguments */
+      break;
+
+    case 1:
+      host = argv [argc - 1];
+      break;
+
+    case 2:
+      host = argv [argc - 2];
+      port = atoi (argv [argc - 1]);
+      break;
+
+    default:
+      printf ("%s: too many arguments (max #%u)\n", progname, argc - optind);
+      while (argc != optind)
+	printf ("%s\n", argv [optind ++]);
+      return 1;
+    }
 
   /* Create a physical connection to the Redis server */
   if (verbose)

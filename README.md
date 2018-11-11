@@ -1,4 +1,5 @@
-# rdsh, the Redis shell
+![logo] rdsh, the Redis shell
+=============================
 
 ```
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -17,6 +18,13 @@
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 ```
+
+Table of contents:
+ * **Hello world!**
+ * **Screenshots**
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 
 * Hello world!
   ============
@@ -47,3 +55,32 @@
   Have fun!
 
   /rocco
+
+
+* Screenshots
+  ===========
+
+  #### A quick tour to rdsh available commands.
+
+  ## Hello World!
+  ![helloworld]
+
+  ## Additional commands for Redis-Client
+  ![help]
+
+  ## Connecting/Disconnecting to/from a Redis Server ...
+  ![connect]
+
+  ## Establishing multiple connections to a Redis Server ...
+  ![multiple]
+
+  ## Populating a Hash with 1000 sequential keys-values ...
+  ![hashing]
+
+
+[logo]: images/rdsh.png
+[helloworld]: images/helloworld.png
+[help]: images/help.png
+[connect]: images/connect.png
+[multiple]: images/multiple.png
+[hashing]: images/hashing.png

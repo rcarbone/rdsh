@@ -41,7 +41,7 @@ struct timeval boottime;
 static char __version__ []  = RDSH_VERSION;
 static char __authors__ []  = RDSH_AUTHOR;
 static char __released__ [] = RDSH_RELEASED;
-static char __id__ []       = "A hack of the popular 'tcsh' with builtin extensions for Redis.\n";
+static char __id__ []       = "A hack of the popular 'tcsh' with extensions for Redis-client.\n";
 
 
 /* You are welcome! */
@@ -72,7 +72,7 @@ void rdsh_init (char * progname)
   /* Hello world! this is [rdsh] speaking */
   helloworld (progname);
 
-  xprintf ("\nType 'help' for the list of builtin extensions implemented by this shell.\n\n");
+  xprintf ("Type 'help' for the list of builtins implemented by this shell.\n\n");
 
   /* Set the prompt */
   rdsh_prompt (NULL);

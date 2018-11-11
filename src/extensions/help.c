@@ -54,7 +54,7 @@ static builtin_t commands [] =
     "connect",
     "redisConnect",
     0,
-    "connect [hostname] [-p port] [-t timeout] [-a auth]",
+    "connect [hostname [port]] [-a hostname] [-p port] [-t timeout] [-a auth]",
     "Create a physical connection to a Redis server"
   },
 
