@@ -64,14 +64,15 @@ HEADER=rdsh.h
 FILES=init.c
 FILES="$FILES prompt.c"
 FILES="$FILES hiredis-wrap.c"
+
+FILES="$FILES usage.c"
 FILES="$FILES help.c"
 FILES="$FILES sessions.c"
-
 FILES="$FILES connect.c"
 FILES="$FILES disconnect.c"
 FILES="$FILES change.c"
 
-FILES="$FILES commands.c"
+FILES="$FILES redis.c"
 FILES="$FILES connections.c"
 FILES="$FILES data-structures.c"
 FILES="$FILES strings.c"
@@ -395,16 +396,16 @@ echo "$PACKAGE development tree"
 echo "  ."
 echo "  |-- `basename $PUBDIR`"
 echo "  |   \`-- `basename $HIREDISDIR`    - (github clone)"
-echo "  |   \`-- $TCSHDIR       - (github clone)"
+echo "  |   \`-- `basename $TCSHDIR`       - (github clone)"
 echo "  \`-- `basename $SRCDIR`"
-echo "      |-- extensions - Implementation of addiotional builtins for Redis"
-echo "      |-- $PACKAGE       - Hack of the tcsh for Redis"
+echo "      |-- extensions - Implementation of builtins for Redis-client"
+echo "      |-- $PACKAGE       - Hack of the tcsh for Redis-client"
 echo "      \`-- rlibc      - C library of useful functions"
 echo
 
 # Compile rlibc if not already here
 cd $ROOTDIR
-echo "Rocco's C library"
+echo "rlibc - C library of useful functions"
 if [ ! -f ${RLIBC} ]; then
   echo -n "  Compiling rlibc library ... "
   make -C src/rlibc -s 1> /dev/null 2>&1
@@ -422,7 +423,7 @@ cd $PUBDIR
 #
 # hiredis
 #
-echo "Hiredis is a minimalistic C client library for Redis"
+echo "hiredis - Hiredis is a minimalistic C client library for Redis"
 if [ ! -d $HIREDISDIR ]; then
   echo
   git clone $HIREDISGIT
@@ -436,17 +437,19 @@ if [ ! -f $HIREDISLIB ]; then
 else
   echo "  Found [hiredis] in $HIREDISLIB"
 fi
+echo
 
 #
 # tcsh
 #
 cd $PUBDIR
-echo "tcsh  - C shell with file name completion and command line editing"
+echo "tcsh - C shell with file name completion and command line editing"
 if [ ! -d $TCSHDIR ]; then
   echo
   git clone $TCSHGIT
   echo
 fi
+echo
 
 # -=-=-=-=-=-=-=-=-=-=
 # Start patching tcsh
@@ -474,12 +477,11 @@ done
 # -=-=-=-=-=-=-=-=-=-=-=-=-=
 
 # Move to the source directory
-echo
 cd $SRCDIR
 
 # Create and populate the main directory
 if [ ! -d $PACKAGE ]; then
-  echo "Populating main src directory $PACKAGE ..."
+  echo "Populating main src directory [$RDSHDIR] ..."
   cp -r $TCSHDIR $PACKAGE
   rm -rf $PACKAGE/.git $PACKAGE/.gitignore
 fi
@@ -499,7 +501,7 @@ echo "done!"
 #
 # Patch src file tcsh-wrapr.c
 #
-echo -n "  patching source file tcsh-wrap.c ..... "
+echo -n "  patching source file tcsh-wrap.c ... "
 cp $SRCDIR/extensions/tcsh-wrap.c $SRCDIR/$PACKAGE/$PACKAGE-tcsh-wrap.c
 echo >> $SRCDIR/$PACKAGE/$PACKAGE-tcsh-wrap.c
 
@@ -540,7 +542,6 @@ echo "done!"
 # Patch Makefile.in
 #
 #   o change the name to the executable
-#   o change the name to the installed binary
 #   o add search path for project header file to EXTRAFLAGS
 #   o add more to EXTRALIBS
 #   o add ${EXTRASRCS} to the macro SHSRCS
@@ -555,17 +556,14 @@ if [ ! -f Makefile.in.ORG ]; then
   cp Makefile.in Makefile.in.ORG
 fi
 
-cp Makefile.in.ORG Makefile.in.tmp
-cat Makefile.in.tmp | sed -e 's|RDSH=tcsh|RDSH=rdsh|' > Makefile.in
-
 cp Makefile.in Makefile.in.tmp
 cat Makefile.in.tmp | sed -e 's|/tcsh|/rdsh|' > Makefile.in
 
 cp Makefile.in Makefile.in.tmp
-cat Makefile.in.tmp | sed -e "s|EXTRAFLAGS =\(.*\)|EXTRAFLAGS = \1 $EXTRAFLAGS|" > Makefile.in
+cat Makefile.in.tmp | sed -e "s|EXTRAFLAGS =\(.*\)|EXTRAFLAGS = \1$EXTRAFLAGS|" > Makefile.in
 
 cp Makefile.in Makefile.in.tmp
-cat Makefile.in.tmp | sed -e "s|EXTRALIBS =\(.*\)|EXTRALIBS = \1 $EXTRALIBS|" > Makefile.in
+cat Makefile.in.tmp | sed -e "s|EXTRALIBS =\(.*\)|EXTRALIBS = \1$EXTRALIBS|" > Makefile.in
 
 cp Makefile.in Makefile.in.tmp
 cat Makefile.in.tmp | sed -e 's|SHSRCS=\(.*\)|SHSRCS=\1 ${EXTRASRCS}|' > Makefile.in
@@ -676,6 +674,10 @@ echo
 
 # Attempt to configure and compile the shell
 cd $RDSHDIR
+
+# Force reconfigure
+rm -f config.log
+
 if [ ! -f config.log ]; then
   echo -n "  Configuring $PACKAGE ... "
  ./configure CFLAGS='-g -O2 -D_DEFAULT_SOURCE -Wno-pointer-compare' > /dev/null

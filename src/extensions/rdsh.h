@@ -211,7 +211,6 @@ enum
   CMD_ZSCAN,
   CMD_ZSCORE,
   CMD_ZUNIONSTORE,
-
 };
 
 
@@ -243,6 +242,9 @@ void rdsh_init (char * progname);
 /* Public functions in file prompt.c */
 void rdsh_prompt (char * text);
 
+/* Public functions in file usage.c */
+void common_usage (unsigned n, char * name, char * synopsis, char * help, struct option * options);
+
 /* Public functions in file help.c */
 builtin_t * builtin_by_id (unsigned id);
 builtin_t * builtin (char * name);
@@ -259,8 +261,14 @@ rdsh_t ** getsessions (void);
 void moresession (rdsh_t * redis);
 void lesssession (rdsh_t * redis);
 
-/* Public functions in file commands.c */
-int rdsh_command (int argc, char * argv []);
+/* Public functions in file connect.c */
+int rdsh_connect (int argc, char * argv []);
+
+/* Public functions in file disconnect.c */
+int rdsh_disconnect (int argc, char * argv []);
+
+/* Public functions in file redis.c */
+int rdsh_redis (int argc, char * argv []);
 
 /*
  * -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

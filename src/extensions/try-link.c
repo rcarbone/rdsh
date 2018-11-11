@@ -32,16 +32,7 @@
 
 /* Project headers */
 #include "rdsh.h"
-#include "prototypes.h"
-
-
-/* variables/functions required to link */
-char * progname = "trylink";
-char STRprompt [256];
-
-int xprintf (const char * s, ...)                    { return 0; }
-char * s_strsave (char * s)                          { return s; }
-void setcopy (const char * a, const char * b, int n) { }
+#include "try-helper.h"
 
 
 static void rdsh_server (int argc, char * argv [])
@@ -56,7 +47,7 @@ static void rdsh_server (int argc, char * argv [])
   rdsh_client_reply (argc, argv);
   rdsh_client_setname (argc, argv);
   rdsh_client_unblock (argc, argv);
-  rdsh_cmd (argc, argv);
+  rdsh_command (argc, argv);
   rdsh_command_count (argc, argv);
   rdsh_command_getkeys (argc, argv);
   rdsh_command_info (argc, argv);

@@ -23,16 +23,13 @@
 /* Project headers */
 #include "rdsh.h"
 
-/* Constants */
-#define NAME   "Create a physical connection to a Redis server."
-
 
 /* GNU short options */
 enum
 {
   /* Miscellanea */
-  OPT_HELP  = 'h',
-  OPT_QUIET = 'q',
+  OPT_HELP    = 'h',
+  OPT_VERBOSE = 'v',
 
   /* Server */
   OPT_HOST    = 'H',    /* IPv4 host     */
@@ -48,7 +45,7 @@ static struct option lopts [] =
 {
   /* Miscellanea */
   { "help",    no_argument,       NULL, OPT_HELP    },
-  { "quiet",   no_argument,       NULL, OPT_QUIET   },
+  { "verbose", no_argument, NULL, OPT_VERBOSE       },
 
   /* Server */
   { "host",    required_argument, NULL, OPT_HOST    },
@@ -61,21 +58,14 @@ static struct option lopts [] =
 
 
 /* Display the syntax for using the builtin */
-static void usage (char * name, struct option * options)
+static void usage (char * name, char * synopsis, char * help, struct option * options)
 {
-  /* Get the longest option name for optimal rendering */
+  /* longest option name */
   unsigned n = optmax (options);
 
-  printf ("%s, %s\n", name, NAME);
-  printf ("Usage: %s [options]\n", name);
-  printf ("\n");
+  common_usage (n, name, synopsis, help, options);
 
-  printf ("Startup:\n");
-  usage_item (options, n, OPT_HELP,  "show this help message");
-  usage_item (options, n, OPT_QUIET, "run quietly");
-  printf ("\n");
-
-  printf ("Define Redis server parameters:\n");
+  printf ("Connection:\n");
   usage_item (options, n, OPT_HOST,    "host");
   usage_item (options, n, OPT_PORT,    "port");
   usage_item (options, n, OPT_TIMEOUT, "timeout");
@@ -92,9 +82,17 @@ int rdsh_connect (int argc, char * argv [])
   unsigned port    = DEFAULT_PORT;
   char * auth      = DEFAULT_AUTH;
   unsigned timeout = DEFAULT_TIMEOUT;
-  bool quiet       = false;
-  rdsh_t * redis;
+  bool verbose    = false;
+  rdsh_t * sess;
   int option;
+
+  /* Lookup for the command in the table of extensions */
+  builtin_t * b = builtin (progname);
+  if (! b)
+    {
+      printf ("%s: Builtin [%s] not found.\n", progname, progname);
+      return 1;
+    }
 
   /* Parse command line options */
   optind = 0;
@@ -107,10 +105,10 @@ int rdsh_connect (int argc, char * argv [])
 	default: printf ("Try '%s --help' for more information.\n", progname); return 1;
 
 	  /* Miscellanea */
-	case OPT_HELP:  usage (progname, lopts);   return 0;
-	case OPT_QUIET: quiet = true;              break;
+	case OPT_HELP:    usage (progname, b -> synopsis, b -> help, lopts);   return 0;
+	case OPT_VERBOSE: verbose = true;                                      break;
 
-	  /* Server */
+	  /* Redis server address and options */
 	case OPT_HOST:    host    = optarg;        break;
 	case OPT_PORT:    port    = atoi (optarg); break;
 	case OPT_TIMEOUT: timeout = atoi (optarg); break;
@@ -118,30 +116,34 @@ int rdsh_connect (int argc, char * argv [])
 	}
     }
 
+  /* Check for optional arguments */
+  if (argc < optind + b -> args)
+    ;
+
   /* Create a physical connection to the Redis server */
-  if (! quiet)
-    printf ("%s: Connecting to Redis server %s@%u ... ", progname, host, port);
-  if (! (redis = redis_connect (host, port, timeout)))
+  if (verbose)
+    printf ("%s: connecting to Redis server at %s@%u ... ", progname, host, port);
+  if (! (sess = redis_connect (host, port, timeout)))
     {
-      if (! quiet)
+      if (! verbose)
 	printf ("Failed!\n");
 
       return 1;
     }
-  if (! quiet)
+  if (verbose)
     printf ("Ok!\n");
 
   if (auth)
     ;
 
   /* Keep track of the last active session */
-  setactive_session (redis);
+  setactive_session (sess);
 
   /* Add to the table of sessions */
-  moresession (redis);
+  moresession (sess);
 
   /* Update user prompt to include the active session */
-  rdsh_prompt (redis_name (redis));
+  rdsh_prompt (redis_name (sess));
 
   return 0;
 }

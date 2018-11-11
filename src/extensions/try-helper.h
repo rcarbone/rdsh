@@ -19,6 +19,15 @@
 
 #pragma once
 
+/* variables/functions required to link */
+char * progname = "trylink";
+char STRprompt [256];
+
+int xprintf (const char * s, ...)                    { return 0; }
+char * s_strsave (char * s)                          { return s; }
+void setcopy (const char * a, const char * b, int n) { }
+
+
 /* Public functions in file server.c */
 int rdsh_bgrewriteaof (int argc, char * argv []);
 int rdsh_bgsave (int argc, char * argv []);
@@ -30,7 +39,7 @@ int rdsh_client_pause (int argc, char * argv []);
 int rdsh_client_reply (int argc, char * argv []);
 int rdsh_client_setname (int argc, char * argv []);
 int rdsh_client_unblock (int argc, char * argv []);
-int rdsh_cmd (int argc, char * argv []);
+int rdsh_command (int argc, char * argv []);
 int rdsh_command_count (int argc, char * argv []);
 int rdsh_command_getkeys (int argc, char * argv []);
 int rdsh_command_info (int argc, char * argv []);

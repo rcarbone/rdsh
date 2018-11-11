@@ -1,6 +1,7 @@
 # all in [pub] and [src/rdsh]
 3rdparty/
-src/extensions/trylink
+src/extensions/try-link
+src/extensions/try-connect
 src/rdsh
 
 # Static libraries

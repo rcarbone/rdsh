@@ -25,36 +25,36 @@
 /* tcsh builtin extension [auth] */
 int rdsh_auth (int argc, char * argv [])
 {
-  return rdsh_command (argc, argv);
+  return rdsh_redis (argc, argv);
 }
 
 /* tcsh builtin extension [echo] */
 int rdsh_echo (int argc, char * argv [])
 {
-  return rdsh_command (argc, argv);
+  return rdsh_redis (argc, argv);
 }
 
 /* tcsh builtin extension [ping] */
 int rdsh_ping (int argc, char * argv [])
 {
-  return rdsh_command (argc, argv);
+  return rdsh_redis (argc, argv);
 }
 
 /* tcsh builtin extension [quit] */
 int rdsh_quit (int argc, char * argv [])
 {
-  return rdsh_command (argc, argv);
+  return rdsh_redis (argc, argv);
 }
 
 /* tcsh builtin extension [select] */
 int rdsh_select (int argc, char * argv [])
 {
-  return rdsh_command (argc, argv);
+  return rdsh_redis (argc, argv);
 }
 
 /* tcsh builtin extension [swapdb] */
 int rdsh_swapdb (int argc, char * argv [])
 {
-  return rdsh_command (argc, argv);
+  return rdsh_redis (argc, argv);
 }
 

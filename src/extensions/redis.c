@@ -68,19 +68,12 @@ static void usage (char * name, char * synopsis, char * help, struct option * op
   /* longest option name */
   unsigned n = optmax (options);
 
-  printf ("\n");
-  printf ("Usage: %s - %s\n", name, synopsis);
-  printf ("       %s [options]\n", name);
-  printf ("\n");
-
-  printf ("Options are:\n");
-  usage_item (options, n, OPT_HELP,    "show this help message");
-  usage_item (options, n, OPT_VERBOSE, "run verbosely");
+  common_usage (n, name, synopsis, help, options);
 }
 
 
-/* Pass the command line options to Redis Server  */
-int rdsh_command (int argc, char * argv [])
+/* Pass the command line options to a Redis Server  */
+int rdsh_redis (int argc, char * argv [])
 {
   char * progname = basename (argv [0]);
   char * sopts    = optlegitimate (lopts);

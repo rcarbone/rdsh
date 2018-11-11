@@ -18,7 +18,8 @@
 
 
 # C source files
-MAINSRCS += trylink.c
+MAINSRCS += try-link.c
+MAINSRCS += try-connect.c
 
 # tcsh-specific
 LIBSRCS  += init.c
@@ -29,6 +30,7 @@ LIBSRCS  += hiredis-wrap.c
 LIBSRCS  += stupid.c
 
 # Sessions
+LIBSRCS  += usage.c
 LIBSRCS  += help.c
 LIBSRCS  += sessions.c
 LIBSRCS  += connect.c
@@ -36,7 +38,7 @@ LIBSRCS  += disconnect.c
 LIBSRCS  += change.c
 
 # General
-LIBSRCS  += commands.c
+LIBSRCS  += redis.c
 
 # Server
 LIBSRCS  += server.c
@@ -71,12 +73,12 @@ HIREDISDIR = ../../3rdparty/hiredis
 INCLUDE  += -I${HIREDISDIR}
 HIREDIS    = ${HIREDISDIR}/libhiredis.a
 
-# rlibc
+# rlibc - C library of useful functions
 RLIBCDIR  = ../rlibc
 INCLUDE  += -I${RLIBCDIR}
 LIBRLIBC  = ${RLIBCDIR}/librlibc.a
 
-# rdsh
+# rdsh - tcsh hack with extensions for Redis-client functionalities
 RDSHDIR    = ../rdsh
 INCLUDE  += -I${RDSHDIR}
 

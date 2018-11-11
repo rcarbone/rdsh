@@ -52,16 +52,16 @@ static builtin_t commands [] =
   {
     CMD_CONNECT,
     "connect",
-    NULL,
+    "redisConnect",
     0,
-    NULL,
-    "Connect to a Redis server"
+    "connect [hostname] [-p port] [-t timeout] [-a auth]",
+    "Create a physical connection to a Redis server"
   },
 
   {
     CMD_DISCONNECT,
     "disconnect",
-    NULL,
+    "redisFree",
     0,
     NULL,
     "Disconnect from a Redis server"
