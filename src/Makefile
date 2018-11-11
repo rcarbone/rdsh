@@ -16,7 +16,6 @@
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 #
 
-
 # The macro SUBDIRS defines the ordered list of all the sub-directories that are recursively tried
 SUBDIRS += rlibc
 SUBDIRS += extensions
@@ -29,7 +28,7 @@ all: Makefile
              echo "Making $$dir ..." ; \
              make -C $$dir -s --no-print-directory ; \
            else \
-             echo "Warning: missing sub-directory $$dir" ; \
+             echo "Warning: missing directory $$dir" ; \
            fi \
          done
 

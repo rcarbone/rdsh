@@ -17,7 +17,7 @@
  */
 
 
-/* Utilities  to handle dynamic arrays of strings */
+/* Utilities to handle dynamic arrays of strings */
 
 #ifdef __cplusplus
 #if defined(__clang__)

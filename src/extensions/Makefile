@@ -65,18 +65,18 @@ LIBSRCS  += sets.c
 LIBSRCS  += sorted-sets.c
 
 #
-# External software components
+# External software
 #
-
-# Hiredis is a minimalistic C client library for Redis 
-HIREDISDIR = ../../3rdparty/hiredis
-INCLUDE  += -I${HIREDISDIR}
-HIREDIS    = ${HIREDISDIR}/libhiredis.a
 
 # rlibc - C library of useful functions
 RLIBCDIR  = ../rlibc
 INCLUDE  += -I${RLIBCDIR}
 LIBRLIBC  = ${RLIBCDIR}/librlibc.a
+
+# Hiredis is a minimalistic C client library for Redis 
+HIREDISDIR = ../../3rdparty/hiredis
+INCLUDE  += -I${HIREDISDIR}
+HIREDIS    = ${HIREDISDIR}/libhiredis.a
 
 # rdsh - tcsh hack with extensions for Redis-client functionalities
 RDSHDIR    = ../rdsh
